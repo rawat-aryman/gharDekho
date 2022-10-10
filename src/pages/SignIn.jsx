@@ -42,7 +42,7 @@ function SignIn() {
                 navigate('/Profile');
             }
         } catch (error) {
-            toast("Enter Correct Credentials")
+            toast.error("Enter Correct Credentials")
         }
     }
 
