@@ -7,6 +7,7 @@ import { db } from '../firebase.config';
 import {ReactComponent as ArrowRightIcon} from '../assets/svg/keyboardArrowRightIcon.svg';
 import visbilityIcon from '../assets/svg/visibilityIcon.svg'
 import { async } from '@firebase/util';
+import GoogleOAuth from '../components/GoogleOAuth';
 
 function SignUp() {
 
@@ -99,7 +100,7 @@ function SignUp() {
 
                 </main>
 
-                {/* Google OAuth */}
+                <GoogleOAuth/>
 
                 <Link to='/SignIn' className='registerLink'>Sign In Instead</Link>
             </div>
