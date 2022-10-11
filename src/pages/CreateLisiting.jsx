@@ -2,13 +2,15 @@ import React,{useState , useEffect , useRef } from 'react'
 import { getAuth , onAuthStateChanged } from 'firebase/auth';
 import {useNavigate} from 'react-router-dom';
 import Spinner from '../components/Spinner';
-
-
+import { toast } from 'react-toastify';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { db } from '../firebase.config';
+import { v4 as uuidv4} from 'uuid';
 
 function CreateLisiting() {
 
     // geoLocation state because geocoding requries to sign up using credit card 
-    const [geoLocationEnabled , setGeoLocationEnabled] = useState(true);
+    const [geoLocationEnabled , setGeoLocationEnabled] = useState(false);
     // this state to store the data of the form 
     const [formData , setFormData] = useState({
         type : 'rent',
@@ -71,10 +73,160 @@ function CreateLisiting() {
         longitude ,
     } = formData;
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        console.log(formData);
-    }
+    // const onSubmit = async (e) => {
+    //     e.preventDefault();
+        
+    //     setLoading(true);
+
+    //     // discounted price should not exceed regular price
+    //     if(discountedPrice >= regularPrice){
+    //         setLoading(false);
+    //         toast.error('Discounted price should be less than Regular price');
+    //         return ;
+    //     }
+
+    //     // can upload only 6 images max
+    //     if(images.length > 6){
+    //         setLoading(false);
+    //         toast.error('can only upload 6 images maximum');
+    //         return ;
+    //     }
+
+    //     let location ;
+    //     let geolocation = {};
+
+    //     geolocation.lat = lattitude;
+    //     geolocation.lng = longitude;
+    //     location = address;
+    //     console.log(geolocation , location);
+
+    //     // store images in firebase storage
+    //     const storeImage = async (image) => {
+    //         return new Promise((resolve , reject) => {
+    //             const storage = getStorage();
+    //             const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
+    //             const storageRef = ref(storage , 'images/' + fileName);
+
+    //             const uploadTask = uploadBytesResumable(storageRef, image);
+
+    //             uploadTask.on('state_changed', 
+    //                 (snapshot) => {
+    //                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    //                     console.log('Upload is ' + progress + '% done');
+    //                     switch (snapshot.state) {
+    //                         case 'paused':
+    //                             console.log('Upload is paused');
+    //                             break;
+    //                         case 'running':
+    //                             console.log('Upload is running');
+    //                             break;
+    //                     }
+    //                 }, 
+    //                 (error) => {
+    //                     // Handle unsuccessful uploads
+    //                     reject(error);
+    //                 }, 
+    //                 () => {
+    //                     // Handle successful uploads on complete
+    //                     // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+    //                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+    //                         resolve(downloadURL);
+    //                     });
+    //                 }
+    //                 );
+    //         })
+    //     }
+
+    //     const imgUrls = await Promise.all(
+    //         [...images].map((image) => {
+    //             storeImage(image);
+    //         })
+    //     ).catch((error) => {
+    //         setLoading(false);
+    //         toast.error('images not uploaded');
+    //     })
+
+    //     console.log(imgUrls);
+
+    //     setLoading(false);
+    // }
+
+    const onSubmit = async (e) => {
+        e.preventDefault()
+    
+        setLoading(true)
+    
+        if (discountedPrice >= regularPrice) {
+            setLoading(false)
+            toast.error('Discounted price needs to be less than regular price')
+            return
+        }
+    
+        if (images.length > 6) {
+            setLoading(false)
+            toast.error('Max 6 images')
+            return
+        }
+    
+        let geolocation = {}
+        let location ;
+        
+        geolocation.lat = lattitude
+        geolocation.lng = longitude
+        
+    
+        // Store image in firebase
+        const storeImage = async (image) => {
+            return new Promise((resolve, reject) => {
+                const storage = getStorage()
+                const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`
+        
+                const storageRef = ref(storage, 'images/' + fileName)
+        
+                const uploadTask = uploadBytesResumable(storageRef, image)
+        
+                uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    const progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    console.log('Upload is ' + progress + '% done')
+                    switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused')
+                        break
+                    case 'running':
+                        console.log('Upload is running')
+                        break
+                    default:
+                        break
+                    }
+                },
+                (error) => {
+                    reject(error)
+                },
+                () => {
+                    // Handle successful uploads on complete
+                    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    resolve(downloadURL)
+                    })
+                }
+                )
+            })
+        }
+    
+        const imgUrls = await Promise.all(
+            [...images].map((image) => storeImage(image))
+            ).catch(() => {
+            setLoading(false)
+            toast.error('Images not uploaded')
+            return
+            })
+
+            console.log(imgUrls);
+            setLoading(false);
+        }
 
     const onMutate = (e) => {
         let boolean = null;
