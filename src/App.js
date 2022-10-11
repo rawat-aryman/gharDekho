@@ -9,7 +9,7 @@ import Profile from './pages/Profile';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import Navbar from './components/Navbar';
-import 'react-toastify/dist/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route exact path='/' element={<Explore/>} />
         <Route path='/ForgotPassword' element={<ForgotPassword/>} />
         <Route path='/Offers' element={<Offers/>} />
-        <Route path='/Category/:CategoryName' element={<Category/>}/>
+        <Route path='/category/:categoryName' element={<Category/>}/>
         <Route path='/Profile' element={<PrivateRoute />} >
           <Route path='/Profile' element={<Profile/>} />
         </Route>
