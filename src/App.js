@@ -11,6 +11,7 @@ import SignUp from './pages/SignUp';
 import Navbar from './components/Navbar';
 import Listing from './pages/Listing';
 import CreateLisiting from './pages/CreateLisiting';
+import ContactLandlord from './pages/ContactLandlord';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path='/Offers' element={<Offers/>} />
         <Route path='/category/:categoryName' element={<Category/>}/>
         <Route path='/category/:categoryName/:id' element={<Listing/>} />
+        <Route path='/contact/:landlordId' element={<ContactLandlord/>} />
         <Route path='/Profile' element={<PrivateRoute />} >
           <Route path='/Profile' element={<Profile/>} />
         </Route>
