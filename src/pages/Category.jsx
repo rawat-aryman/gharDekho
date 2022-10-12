@@ -47,7 +47,7 @@ function Category() {
             })
         })
 
-        // console.log(listings);
+        console.log(listings);
 
         setListings(listings)
         setLoading(false)
@@ -68,6 +68,7 @@ function Category() {
         </header>
 
         {loading ? <Spinner/> : (listings.length > 0 ? <>
+            {/* {console.log(listings)} */}
             <main>
                 {listings.map((listing) => {
                     return <ListingItem 
