@@ -16,8 +16,9 @@ import ListingItem from '../components/ListingItem'
 
 function Category() {
 
-    const [listings, setListings] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [listings, setListings] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [lastFetchedListing , setLastFetchedListing] = useState(null);
 
     const params = useParams();
 
@@ -37,6 +38,9 @@ function Category() {
 
         // Execute query
         const querySnap = await getDocs(q);
+
+        const lastFetched = querySnap.docs[querySnap.docs.length - 1];
+        setLastFetchedListing(lastFetched);
 
         const listings = []
 
@@ -60,6 +64,44 @@ function Category() {
     }, [params.categoryName])
 
 
+    const onfetchMoreListings = async () => {
+        try {
+        // Get reference
+        const listingsRef = collection(db, 'listings')
+
+        // Create a query
+        const q = query(
+            listingsRef,
+            where('type', '==', params.categoryName),
+            orderBy('timeStamp', 'desc'),
+            startAfter(lastFetched),
+            limit(10)
+        )
+
+        // Execute query
+        const querySnap = await getDocs(q);
+
+        const lastFetched = querySnap.docs[querySnap.docs.length - 1];
+        setLastFetchedListing(lastFetched);
+
+        const listings = []
+
+        querySnap.forEach((doc) => {
+            return listings.push({
+                id: doc.id,
+                data: doc.data(),
+            })
+        })
+
+        // console.log(listings);
+
+        setListings((prevState) => [...prevState , ...listings])
+        setLoading(false)
+        } catch (error) {
+        toast.error('Could not fetch listings')
+        }
+    }
+
     return <div className="category">
         <header>
             <p className="pageHeader">
@@ -78,6 +120,11 @@ function Category() {
                             />
                 })}
             </main>
+
+            <br /><br />
+            {lastFetchedListing && (
+                <p className="loadMore" onClick={onfetchMoreListings} >Load More</p>
+            )}
         </> : 'no data')}
     </div>
     
