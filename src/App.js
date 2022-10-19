@@ -12,6 +12,7 @@ import Navbar from './components/Navbar';
 import Listing from './pages/Listing';
 import CreateLisiting from './pages/CreateLisiting';
 import ContactLandlord from './pages/ContactLandlord';
+import EditListing from './pages/EditListing';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path='/Profile' element={<Profile/>} />
         </Route>
         <Route path='/CreateListing' element={<CreateLisiting/>} />
+        <Route path='/EditListing/:listingId' element={<EditListing/>} />
         <Route path='/SignIn' element={<SignIn/>} />
         <Route path='/SignUp' element={<SignUp/>} />
       </Routes>

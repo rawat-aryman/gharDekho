@@ -41,7 +41,7 @@ function Slider() {
   }
 
   if (listings.length === 0) {
-    return <><p>hello</p></>
+    return <></>
   }
 
   return (

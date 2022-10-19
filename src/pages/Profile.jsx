@@ -104,6 +104,10 @@ function Profile() {
         }
       }
 
+    const onEdit = (listingId) => {
+        navigate(`/EditListing/${listingId}`);
+    }
+
     if(loading){
         return <Spinner />
     }
@@ -146,7 +150,7 @@ function Profile() {
                         <p className="listingText">Your Listings</p>
                         <ul className="listingsList">
                             {listings.map((listing) => {
-                                return <ListingItem listing={listing.data} id={listing.id} key={listing.id} onDelete={() => onDelete(listing.id)} />
+                                return <ListingItem listing={listing.data} id={listing.id} key={listing.id} onDelete={() => onDelete(listing.id)} onEdit={() => onEdit(listing.id)} />
                             })}
                         </ul>
                     </>
